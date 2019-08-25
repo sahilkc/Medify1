@@ -1,4 +1,15 @@
 import React from 'react';
+import * as firebase from 'firebase';
+const firebaseconfig={
+  apiKey: "AIzaSyAfKdATw8jKVMxgvA__c9B1nmOjlnlC2ww",
+  authDomain: "medify-832f1.firebaseapp.com",
+  databaseURL: "https://medify-832f1.firebaseio.com",
+  projectId: "medify-832f1",
+  storageBucket: "",
+  messagingSenderId: "298371205278",
+  appId: "1:298371205278:web:69986c7274395361"
+};  
+firebase.initializeApp(firebaseconfig);
 import {
   ActivityIndicator,
   AsyncStorage,
@@ -6,7 +17,6 @@ import {
   StatusBar,
   StyleSheet,
   View,
-
   Text,
   BackHandler,
 
@@ -97,29 +107,31 @@ export default class SignInScreen extends React.Component {
   }
 
   _validate = () => {
-    //if (this.state.username == "") { this.setState({ message: "Oops! Username. field cannot be empty :(" }) }
-    //else if (this.state.password == "") { this.setState({ message: "Oops! Password field cannot be empty :(" }) }
-
-    if (this.state.username == "Sita" && this.state.password == "") {
+    if (this.state.username == "") { this.setState({ message: "Oops! Username field cannot be empty :(" }) }
+    else if (this.state.password == "") { this.setState({ message: "Oops! Password field cannot be empty :(" }) }
+    else if (this.state.username == "Sita" && this.state.password == "") {
 
 
       AsyncStorage.setItem('Sitaram', 'Sitaram');
       AsyncStorage.setItem('UserId', 'asdf');
       AsyncStorage.setItem('UserType', 'moadar');
-
       onSignIn(this.state.username)
       this.props.navigation.navigate('AppContain');
     }
-
     else { this._userLogin() }
   };
-
-
   _userLogin() {
+    try{
+        firebase.auth().signInWithEmailAndPassword(this.state.username,this.state.password)
+        .then((username)=>{
+          onSignIn(this.state.username);
+          this.props.navigation.navigate('AppContain');
+        })
+    }
+    catch(err)
+    {
 
-    { this.setState({ message: "thik se dal bey madarchut" }) }
-
-    //hya gara haii sahil
+    }
   }
   _signOutAsync = () => {
 
