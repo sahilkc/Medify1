@@ -1,4 +1,14 @@
 import React from 'react';
+import * as firebase from 'firebase';
+const firebaseconfig={
+  apiKey: "AIzaSyAfKdATw8jKVMxgvA__c9B1nmOjlnlC2ww",
+  authDomain: "medify-832f1.firebaseapp.com",
+  databaseURL: "https://medify-832f1.firebaseio.com",
+  projectId: "medify-832f1",
+  storageBucket: "",
+  messagingSenderId: "298371205278",
+  appId: "1:298371205278:web:69986c7274395361"
+};  
 import {
     ActivityIndicator,
     AsyncStorage,
@@ -75,11 +85,11 @@ export default class SignUpScreen extends React.Component {
 
                         <TextInput style={styles.inputBox}
                             underlineColorAndroid='rgba(0,0,0,0)'
-                            placeholder=" User Id"
+                            placeholder=" Email"
                             placeholderTextColor="#ffffff"
                             keyboardType="email-address"
                             ref="userid"
-                            onChangeText={(userid) => this.setState({ userid })}
+                            onChangeText={(email) => this.setState({ email })}
                             onSubmitEditing={() => this.refs.yyyy.focus()}
 
                         />
@@ -162,15 +172,12 @@ export default class SignUpScreen extends React.Component {
     _submit = () => {
         if (this.state.firstname == "") { this.setState({ message: "invalid firstname :(" }) }
         else if (this.state.lastname == "") { this.setState({ message: "invalid lastname  :(" }) }
-        else if (this.state.userid == "") { this.setState({ message: "invalid Userid  :(" }) }
+        else if (this.state.email == "") { this.setState({ message: "invalid email  :(" }) }
         else if (this.state.birthYear == "" || this.state.birthYear >= 2019 || this.state.birthYear <= 0) { this.setState({ message: "invalid birthYear  :(" }) }
         else if (this.state.birthMonth == "" || this.state.birthMonth >= 13 || this.state.birthMonth <= 0) { this.setState({ message: "invalid birthMonth :(" }) }
         else if (this.state.birthDay == "" || this.state.birthDay >= 32 || this.state.birthDay <= 0) { this.setState({ message: "invalid birthDay :(" }) }
         else if (this.state.password == "") { this.setState({ message: "invalid Password :(" }) }
         else if (this.state.repassword != this.state.password) { this.setState({ message: "Oops! passwords are not matching :(" }) }
-
-
-
         else this._Submited();
     }
     _Submited = () => {
@@ -186,7 +193,19 @@ export default class SignUpScreen extends React.Component {
                     },
                     style: "cancel"
                 },
-                { text: "subbmit", onPress: () => this.props.navigation.navigate('SignIn') }
+                { text: "submit", onPress: () => {
+                 try{
+                    firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password);
+                    this.props.navigation.navigate('SignIn');
+                 }
+                 catch{
+                    this.setState({ message: "Oops! Email or Password incorrect. Try Again!!!!!! :(" });
+                    //ask sitaram to set email and password field as empty and set focus to email textbox
+              
+                     };
+                 }
+               
+                }
             ],
             { cancelable: false }
         );

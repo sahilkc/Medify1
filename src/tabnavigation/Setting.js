@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 
 export default class Setting extends React.Component {
     static navigationOptions = {
-        title: 'Setting',
+        title: 'Locations',
         headerTitleStyle: {
             textAlign: "center",
             flex: 1

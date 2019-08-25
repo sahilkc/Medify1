@@ -130,6 +130,8 @@ export default class SignInScreen extends React.Component {
     }
     catch(err)
     {
+      this.setState({ message: "Oops! Email or Password incorrect. Try Again!!!!!! :(" });
+      //ask sitaram to set email and password field as empty and set focus to email textbox
 
     }
   }
