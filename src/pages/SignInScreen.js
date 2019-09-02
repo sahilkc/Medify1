@@ -17,6 +17,7 @@ import {
   StatusBar,
   StyleSheet,
   View,
+
   Text,
   BackHandler,
 
@@ -68,14 +69,13 @@ export default class SignInScreen extends React.Component {
           <View style={styles.formcontainer}>
             <TextInput style={styles.inputBox}
               underlineColorAndroid='rgba(0,0,0,0)'
-              placeholder="Username"
+              placeholder="Email"
               placeholderTextColor="#ffffff"
               selectionColor="#fff"
               keyboardType="email-address"
-              ref="username"
+              ref="email"
               onSubmitEditing={() => this.refs.password.focus()}
-
-              onChangeText={(username) => this.setState({ username })}
+              onChangeText={(email) => this.setState({ email })}
             />
             <TextInput style={styles.inputBox}
               underlineColorAndroid='rgba(0,0,0,0)'
@@ -107,33 +107,36 @@ export default class SignInScreen extends React.Component {
   }
 
   _validate = () => {
-    if (this.state.username == "") { this.setState({ message: "Oops! Username field cannot be empty :(" }) }
+    if (this.state.email == "") { this.setState({ message: "Oops! Username. field cannot be empty :(" }) }
+    
     else if (this.state.password == "") { this.setState({ message: "Oops! Password field cannot be empty :(" }) }
-    else if (this.state.username == "Sita" && this.state.password == "") {
 
-
+   else if (this.state.email == "sita@sita.com" && this.state.password == "sita") {
       AsyncStorage.setItem('Sitaram', 'Sitaram');
       AsyncStorage.setItem('UserId', 'asdf');
       AsyncStorage.setItem('UserType', 'moadar');
       onSignIn(this.state.username)
       this.props.navigation.navigate('AppContain');
     }
+
     else { this._userLogin() }
   };
+
+
   _userLogin() {
     try{
-        firebase.auth().signInWithEmailAndPassword(this.state.username,this.state.password)
-        .then((username)=>{
-          onSignIn(this.state.username);
-          this.props.navigation.navigate('AppContain');
-        })
-    }
-    catch(err)
-    {
-      this.setState({ message: "Oops! Email or Password incorrect. Try Again!!!!!! :(" });
-      //ask sitaram to set email and password field as empty and set focus to email textbox
+      firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password)
+      .then((email)=>{
+        onSignIn(this.state.email);
+        this.props.navigation.navigate('AppContain');
+      })
+  }
+  catch(err)
+  {
+    this.setState({ message: "Oops! Email or Password incorrect. Try Again!!!!!! :(" });
+    //ask sitaram to set email and password field as empty and set focus to email textbox
 
-    }
+  }
   }
   _signOutAsync = () => {
 
@@ -187,9 +190,10 @@ const styles = StyleSheet.create({
   inputBox: {
     width: 300,
     backgroundColor: 'rgba(255, 255,255,0.3)',
-    borderRadius: 10,
+
     paddingHorizontal: 16,
     fontSize: 16,
+    borderRadius: 10,
     color: '#ffffff',
     marginVertical: 10
   },

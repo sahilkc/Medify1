@@ -1,14 +1,5 @@
 import React from 'react';
 import * as firebase from 'firebase';
-const firebaseconfig={
-  apiKey: "AIzaSyAfKdATw8jKVMxgvA__c9B1nmOjlnlC2ww",
-  authDomain: "medify-832f1.firebaseapp.com",
-  databaseURL: "https://medify-832f1.firebaseio.com",
-  projectId: "medify-832f1",
-  storageBucket: "",
-  messagingSenderId: "298371205278",
-  appId: "1:298371205278:web:69986c7274395361"
-};  
 import {
     ActivityIndicator,
     AsyncStorage,
@@ -34,12 +25,9 @@ export default class SignUpScreen extends React.Component {
     }
 
     state = {
-        firstname: '',
-        lastname: '',
+
         userid: '',
-        birthYear: '',
-        birthMonth: '',
-        birthDay: '',
+
         password: '',
         repassword: '',
         message: '',
@@ -60,77 +48,20 @@ export default class SignUpScreen extends React.Component {
                 <ImageBackground source={BgImage} style={{ width: '100%', height: '100%' }} >
                     <Logo />
                     <View style={styles.formcontainer}>
-                        <View style={styles.firstAndLastName}>
-                            <TextInput style={styles.inputBoxFirstname}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholder="Firstname"
-                                placeholderTextColor="#ffffff"
-                                ref="firstname"
-                                onChangeText={(firstname) => this.setState({ firstname })}
-                                onSubmitEditing={() => this.refs.lastname.focus()}
-
-
-                            />
-
-                            <TextInput style={styles.inputBoxLastname}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholder="Lastname"
-                                placeholderTextColor="#ffffff"
-                                ref="lastname"
-                                onChangeText={(lastname) => this.setState({ lastname })}
-                                onSubmitEditing={() => this.refs.userid.focus()}
-
-                            />
-                        </View>
 
                         <TextInput style={styles.inputBox}
                             underlineColorAndroid='rgba(0,0,0,0)'
-                            placeholder=" Email"
+                            placeholder=" User Id"
                             placeholderTextColor="#ffffff"
                             keyboardType="email-address"
-                            ref="userid"
+                            ref="email"
                             onChangeText={(email) => this.setState({ email })}
-                            onSubmitEditing={() => this.refs.yyyy.focus()}
+                            onSubmitEditing={() => this.refs.password.focus()}
 
                         />
 
-                        <View style={styles.firstAndLastName}>
-                            <Text style={styles.signupButton}>D.O.B</Text>
-                            <TextInput style={styles.inputYYYY}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholder="YYYY"
-                                placeholderTextColor="#ffffff"
-                                keyboardType="numeric"
-                                ref="yyyy"
-                                maxLength={4}
-                                onChangeText={(birthYear) => this.setState({ birthYear })}
-                                onSubmitEditing={() => this.refs.mm.focus()}
-                            />
-                            <TextInput style={styles.inputMM}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholder="MM"
-                                keyboardType="numeric"
-                                placeholderTextColor="#ffffff"
-                                ref="mm"
-                                onChangeText={(birthMonth) => this.setState({ birthMonth })}
-                                onSubmitEditing={() => this.refs.dd.focus()}
-                                maxLength={2}
-                            />
 
 
-
-                            <TextInput style={styles.inputMM}
-                                underlineColorAndroid='rgba(0,0,0,0)'
-                                placeholder="DD"
-                                keyboardType="numeric"
-                                placeholderTextColor="#ffffff"
-                                ref="dd"
-                                maxLength={2}
-                                onChangeText={(birthDay) => this.setState({ birthDay })}
-                                onSubmitEditing={() => this.refs.password.focus()}
-
-                            />
-                        </View>
                         <TextInput style={styles.inputBox}
                             underlineColorAndroid='rgba(0,0,0,0)'
                             placeholder="Password"
@@ -139,6 +70,7 @@ export default class SignUpScreen extends React.Component {
                             ref="password"
                             onChangeText={(password) => this.setState({ password })}
                             onSubmitEditing={() => this.refs.repassword.focus()}
+
 
                         />
                         <TextInput style={styles.inputBox}
@@ -170,14 +102,10 @@ export default class SignUpScreen extends React.Component {
         )
     }
     _submit = () => {
-        if (this.state.firstname == "") { this.setState({ message: "invalid firstname :(" }) }
-        else if (this.state.lastname == "") { this.setState({ message: "invalid lastname  :(" }) }
-        else if (this.state.email == "") { this.setState({ message: "invalid email  :(" }) }
-        else if (this.state.birthYear == "" || this.state.birthYear >= 2019 || this.state.birthYear <= 0) { this.setState({ message: "invalid birthYear  :(" }) }
-        else if (this.state.birthMonth == "" || this.state.birthMonth >= 13 || this.state.birthMonth <= 0) { this.setState({ message: "invalid birthMonth :(" }) }
-        else if (this.state.birthDay == "" || this.state.birthDay >= 32 || this.state.birthDay <= 0) { this.setState({ message: "invalid birthDay :(" }) }
+        if (this.state.userid == "") { this.setState({ message: "invalid Userid  :(" }) }
         else if (this.state.password == "") { this.setState({ message: "invalid Password :(" }) }
         else if (this.state.repassword != this.state.password) { this.setState({ message: "Oops! passwords are not matching :(" }) }
+
         else this._Submited();
     }
     _Submited = () => {
@@ -201,7 +129,6 @@ export default class SignUpScreen extends React.Component {
                  catch{
                     this.setState({ message: "Oops! Email or Password incorrect. Try Again!!!!!! :(" });
                     //ask sitaram to set email and password field as empty and set focus to email textbox
-              
                      };
                  }
                
