@@ -101,8 +101,6 @@ export default class SignInScreen extends React.Component {
           </View>
         </ImageBackground>
       </View>
-
-
     )
   }
 

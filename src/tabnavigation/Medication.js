@@ -2,9 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ScrollView } from 'react-native-gesture-handler';
-
-
-
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+var email=''
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        email=user.email;
+        
+    } else {
+      email='';
+    }
+  });
 export default class Medication extends React.Component {
     static navigationOptions = {
         header: null,
@@ -14,12 +22,12 @@ export default class Medication extends React.Component {
 
         nameOfMedication: '',
         medificationNote: '',
-        medicationType: '',
-        doses: '',
+        medificationType: '',
+        dosage: '',
         quality: '',
     };
-
-    render() {
+    render() 
+    {
         let data = [{
             value: 'Pills',
         }, {
@@ -60,7 +68,6 @@ export default class Medication extends React.Component {
                     <Dropdown
                         label='Medicine type'
                         data={data}
-
                         containerStyle={{
 
                             width: 320,
@@ -72,10 +79,9 @@ export default class Medication extends React.Component {
                         }}
                         ref='mtype'
                         onSubmitEditing={() => this.refs.doses.focus()}
-                        onChangeText={(medicationType) => this.setState({ medicationType })}
+                         onChangeText={(medificationType) => this.setState({ medificationType })}
                     />
-
-
+        
                     <TextInput
                         style={{
                             flexGrow: 1,
@@ -93,9 +99,9 @@ export default class Medication extends React.Component {
                         placeholder="Dosage"
                         keyboardType='numeric'
                         underlineColorAndroid="transparent"
-                        ref="doses"
+                        ref="dosage"
                         onSubmitEditing={() => this.refs.quality.focus()}
-                        onChangeText={(doses) => this.setState({ doses })}
+                        onChangeText={(dosage) => this.setState({ dosage: dosage })}
                     />
                     <TextInput
                         style={{
@@ -140,6 +146,11 @@ export default class Medication extends React.Component {
                         onChangeText={(medificationNote) => this.setState({ medificationNote })}
 
                     />
+                              {!!this.state.message && (
+                <Text style={styles.message} >
+                {this.state.message}
+                </Text>
+                )}
                     <View style={styles.signupTextCont}>
                         <TouchableOpacity style={styles.button} onPress={this.add} >
                             <Text style={styles.buttonText} >ADD</Text>
@@ -151,9 +162,32 @@ export default class Medication extends React.Component {
         );
     }
     add = () => {
-        this.props.navigation.navigate('MedificationSub');
+        
+      if (this.state.nameOfMedication == "") { this.setState({ message: "Oops! Medification name field cannot be left empty :(" }) }
+    
+      else if (this.state.dosage == "") { this.setState({ message: "Oops! Dosage field cannot be empty :(" }) }
+      else if (this.state.quality == "") { this.setState({ message: "Oops! Quantity field cannot be empty :(" }) }
+      else if (this.state.medificationNote == "") { this.setState({ message: "Oops! Medification note field cannot be empty :(" }) }
+
+    else
+    {
+        firebase.firestore().collection('Medication').add({
+           dosage :this.state.dosage,
+           emailAddress:email,
+           medicationName:this.state.nameOfMedication,
+           medicineType: this.state.medificationType,
+           medicinenotes:this.state.medificationNote,
+           quantity:this.state.quality  
+        }).then((result)=>{ this.props.navigation.navigate('MedificationSub');})
+        .catch((error)=>{this.setState({
+            nameOfMedication:'',
+            dosage:'',
+            quality:'',
+            medificationNote:''
+        })});
     }
 
+}
 }
 
 const styles = StyleSheet.create({
