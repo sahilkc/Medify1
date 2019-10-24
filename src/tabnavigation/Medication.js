@@ -178,7 +178,7 @@ export default class Medication extends React.Component {
            medicineType: this.state.medificationType,
            medicinenotes:this.state.medificationNote,
            quantity:this.state.quality  
-        }).then((result)=>{ this.props.navigation.navigate('MedificationSub');})
+        }).then((result)=>{ this.props.navigation.goBack();})
         .catch((error)=>{this.setState({
             nameOfMedication:'',
             dosage:'',
