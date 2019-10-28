@@ -1,59 +1,65 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+import { StyleSheet,Alert, Text,PickerAndroid, View, Button, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ScrollView } from 'react-native-gesture-handler';
 import DatePicker from 'react-native-datepicker';
-
-
+var today=new Date();
+var emailadd=''
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        emailadd=user.email;
+        
+    } else {
+      emailadd='';
+    }
+  });
 
 export default class Medication extends React.Component {
     static navigationOptions = {
         header: null,
-
-
     };
-
-
     add = () => {
         this.props.navigation.goBack()
     }
-    state = {
-        date: "",
-        time: "",
+    constructor(props){
+        super(props)
+   this.state = {
+       marker:[],
+        date: '',
+        time: '',
         nameOfMedication: '',
-        medificationNote: '',
-        medicationType: '',
-        doses: '',
-        quality: '',
+        numberofdays: '',
     };
-
-    render() {
-        let data = [{
-            value: 'Pills',
-        }, {
-            value: 'Syrup',
-        }, {
-            value: 'Injection',
-        },
-        {
-            value: 'Capsule'
-        }
-        ];
-
+    this.ref= firebase.firestore().collection('Medication').where('emailAddress','==',emailadd)
+}
+componentDidMount()
+{
+       
+        this.ref.onSnapshot((querySnapshot)=>{
+            const markers = [];
+            querySnapshot.forEach((doc) => {
+                markers.push({
+                    medicationName: doc.data().medicationName
+                });
+            });
+            this.setState({
+                marker: markers,
+                loading: false,
+            });
+        });
+}
+    render(){
         return (
-
             <ScrollView>
                 < KeyboardAvoidingView style={styles.container}>
 
-
-
-                    <Dropdown
+                    {/* <Dropdown
                         label='Medicine name'
                         data={data}
-
                         containerStyle={{
                             paddingTop: 30,
-
                             width: 320,
                             width: 300,
                             marginBottom: 40,
@@ -63,7 +69,27 @@ export default class Medication extends React.Component {
                         }}
                         ref='mname'
                         onSubmitEditing={() => this.refs.date.focus()}
-                        onChangeText={(medicationType) => this.setState({ medicationType })}
+                        onChangeText={(nameOfMedication) => this.setState({ nameOfMedication })}
+                    /> */}
+                    <TextInput
+                        style={{
+                            flexGrow: 1,
+                            height: 43, width: 320,
+                            borderColor: '#00806b',
+                            borderWidth: 1,
+                            marginBottom: 20,
+                            fontSize: 16,
+                            borderRadius: 5,
+                            color: '#00806b',
+                            marginLeft: 10,
+                            marginRight: 10,
+                            marginTop: 5
+                        }}
+                        placeholder=" Name of medication"
+                        underlineColorAndroid="transparent"
+                        ref='noofdays'
+                        onSubmitEditing={() => this.refs.time.focus()}
+                        onChangeText={(nameOfMedication) => this.setState({ nameOfMedication })}
                     />
                     <View style={{ flexDirection: 'row', }}>
                         <Text style={{
@@ -84,8 +110,7 @@ export default class Medication extends React.Component {
                             mode="date"
                             placeholder="Select date"
                             format="YYYY-MM-DD"
-                            minDate="2016-05-01"
-                            maxDate="2016-06-01"
+                            minDate={today}
                             confirmBtnText="Confirm"
                             cancelBtnText="Cancel"
 
@@ -120,7 +145,6 @@ export default class Medication extends React.Component {
                             onDateChange={(date) => { this.setState({ date: date }) }}
                         />
                     </View>
-
                     <TextInput
                         style={{
                             flexGrow: 1,
@@ -135,12 +159,12 @@ export default class Medication extends React.Component {
                             marginRight: 10,
                             marginTop: 5
                         }}
-                        placeholder="   No of days"
+                        placeholder=" No of days"
                         keyboardType='numeric'
                         underlineColorAndroid="transparent"
                         ref='noofdays'
                         onSubmitEditing={() => this.refs.time.focus()}
-                        onChangeText={(doses) => this.setState({ doses })}
+                        onChangeText={(numberofdays) => this.setState({ numberofdays })}
                     />
 
                     <View style={{ flexDirection: 'row', }}>
@@ -195,30 +219,6 @@ export default class Medication extends React.Component {
                             onDateChange={(time) => { this.setState({ time: time }) }}
                         />
                     </View>
-                     <TextInput
-                        style={{
-                            flexGrow: 1,
-                            height: 43, width: 320,
-                            borderColor: '#00806b',
-                            borderWidth: 1,
-                            marginBottom: 20,
-                            fontSize: 16,
-                            borderRadius: 5,
-                            color: '#00806b',
-                            marginLeft: 10,
-                            marginRight: 10,
-                            marginTop: 5
-                        }}
-                        placeholder="   Time period of medication"
-                        keyboardType='numeric'
-                        underlineColorAndroid="transparent"
-                        ref='noofdays'
-                        onSubmitEditing={() => this.refs.time.focus()}
-                        onChangeText={(doses) => this.setState({ doses })}
-                    />
-
-
-
                     <View style={styles.signupTextCont}>
                         <TouchableOpacity style={styles.button} onPress={this.add} >
                             <Text style={styles.buttonText} >ADD</Text>
@@ -226,13 +226,24 @@ export default class Medication extends React.Component {
                     </View>
                 </ KeyboardAvoidingView>
             </ScrollView>
-
         );
     }
-
-
+    add=()=>
+    {   
+        var gottenDate=new Date(this.state.date);
+        
+        var gottennumberofdays=parseInt(this.state.numberofdays);
+        var gottenTime=new Date('1970-01-01T'+this.state.time+'Z');
+        var gottenDate1=new Date(gottenDate.getFullYear(),gottenDate.getMonth(),gottenDate.getDate(),gottenTime.getHours(),gottenTime.getMinutes(),gottenTime.getSeconds(),0) 
+        let i=0;
+          for(i;i<gottennumberofdays;i++)
+          {
+            
+        }
+        Alert.alert(JSON.stringify(gottenDate1));
+       
+    }
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
