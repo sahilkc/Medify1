@@ -54,7 +54,6 @@ export default class MedificationSub extends React.Component {
     //handles the on press of the flatlist
     //shows the details of the medication name pressed
     getListViewItem = (item) => {
-        {() => this.setState({ visibleModal: 'backdropPress' })}
          
         this.ref= firebase.firestore().collection('Medication').where('medicationName','==',item.medicationName);
         this.ref.onSnapshot((querySnapshot)=>{
@@ -64,18 +63,11 @@ export default class MedificationSub extends React.Component {
                                 medicationType: doc.data().medicineType,
                                 medicationNotes: doc.data().medicinenotes,
                                 medicationQuantity: doc.data().quantity,
-                               
-                        },)
-                                
+                            
+                        },)                            
                 });
             });
-           return(
-              
-        
-
-           
-         Alert.alert('Quantity of medicine: '+JSON.stringify(this.state.medicationQuantity)
-                    +'Additional medicine notes: '+JSON.stringify(this.state.medicationNotes)))
+        this.props.navigation.navigate('Reminder',{text:this.state.medicationName});
            
     }  
 

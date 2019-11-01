@@ -31,26 +31,12 @@ export default class Medication extends React.Component {
         time: '',
         nameOfMedication: '',
         numberofdays: '',
+        medicationName:''
     };
-    this.ref= firebase.firestore().collection('Medication').where('emailAddress','==',emailadd)
-}
-componentDidMount()
-{
-       
-        this.ref.onSnapshot((querySnapshot)=>{
-            const markers = [];
-            querySnapshot.forEach((doc) => {
-                markers.push({
-                    medicationName: doc.data().medicationName
-                });
-            });
-            this.setState({
-                marker: markers,
-                loading: false,
-            });
-        });
 }
     render(){
+        const { navigation } = this.props;
+        const text=navigation.getParam('text', 'NO-ID');
         return (
             <ScrollView>
                 < KeyboardAvoidingView style={styles.container}>
@@ -85,7 +71,7 @@ componentDidMount()
                             marginRight: 10,
                             marginTop: 5
                         }}
-                        placeholder=" Name of medication"
+                        value={text}
                         underlineColorAndroid="transparent"
                         ref='noofdays'
                         onSubmitEditing={() => this.refs.time.focus()}
@@ -219,6 +205,7 @@ componentDidMount()
                             onDateChange={(time) => { this.setState({ time: time }) }}
                         />
                     </View>
+
                     <View style={styles.signupTextCont}>
                         <TouchableOpacity style={styles.button} onPress={this.add} >
                             <Text style={styles.buttonText} >ADD</Text>
@@ -229,19 +216,36 @@ componentDidMount()
         );
     }
     add=()=>
+    {
+
+    if (this.state.date == "") { Alert.alert('Date cannot be left empty') }
+      else if (this.state.numberofdays == "") { Alert.alert('Number of days cannot be left empty')}
+      else if (this.state.time == "") { Alert.alert('Time cannot be left empty') }
+
+    else
     {   
         var gottenDate=new Date(this.state.date);
-        
         var gottennumberofdays=parseInt(this.state.numberofdays);
         var gottenTime=new Date('1970-01-01T'+this.state.time+'Z');
         var gottenDate1=new Date(gottenDate.getFullYear(),gottenDate.getMonth(),gottenDate.getDate(),gottenTime.getHours(),gottenTime.getMinutes(),gottenTime.getSeconds(),0) 
+        const { navigation } = this.props;
+        const text=navigation.getParam('text', 'NO-ID');
         let i=0;
-          for(i;i<gottennumberofdays;i++)
-          {
-            
+        for(i=0;i<gottennumberofdays;i++)
+        {
+            //var timestamp=parseInt((new Date(gottenDate1).getTime() / 1000).toFixed(0));
+            firebase.firestore().collection('Reminder').add({
+                emailAddress:emailadd,
+                medicationName:text,
+                dateandTime:new Date(gottenDate1)
+             })
+            var gottenDate1=new Date(gottenDate.getFullYear(),gottenDate.getMonth(),gottenDate.getDate()+1,gottenTime.getHours(),gottenTime.getMinutes(),gottenTime.getSeconds(),0);
+             Alert.alert('Reminder Sucessfully added');
+             this.setState({
+                time:'',
+            })
         }
-        Alert.alert(JSON.stringify(gottenDate1));
-       
+    }   
     }
 }
 const styles = StyleSheet.create({
